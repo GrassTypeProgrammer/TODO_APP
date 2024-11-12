@@ -1,12 +1,16 @@
 import TodoItem from "./components/TodoItem";
 import Form from "./components/Form";
 import FilterButton from "./components/FilterButton";
+import { useState } from "react";
+import { nanoid } from "nanoid";
 
 function App(props) {
+    const [tasks, setTasks] = useState(props.tasks);
+    
     return (
       <div className="todoapp stack-large">
         <h1>TODO</h1>
-        <Form/>
+        <Form onSubmit={addTask}/>
         <div className="filters btn-group stack-exception">
             <FilterButton label="All"/>
             <FilterButton label="Active"/>
@@ -18,22 +22,31 @@ function App(props) {
           role="list"
           className="todo-list stack-large stack-exception"
           aria-labelledby="list-heading">
-            {createListItems(props.tasks)}
+            {createListItems(tasks)}
         </ul>
       </div>
     );
-  }
-
-  function createListItems(tasks) {
-    const listItems = [];
-
-    for (let index = 0; index < tasks.length; index++) {
-        const task = tasks[index];
-        listItems.push(<TodoItem id={task.id} name={task.name} completed={task.completed} key={task.id}/>)
+ 
+    function createListItems(tasks) {
+      const listItems = [];
+  
+      for (let index = 0; index < tasks.length; index++) {
+          const task = tasks[index];
+          listItems.push(<TodoItem id={task.id} name={task.name} completed={task.completed} key={task.id}/>)
+      }
+  
+      return listItems;
     }
 
-    return listItems;
+    function addTask(name){
+        if(name != undefined && name != ""){
+           const newTask = { id: `todo_${nanoid()}`, name, completed: false };
+           alert(newTask.id)
+           setTasks([...tasks, newTask]);
+        }
+    }
   }
+
   
   export default App;
   
