@@ -1,4 +1,4 @@
-
+import { PropTypes } from "prop-types"
 
 function FilterButton(props) {
     return <button 
@@ -12,6 +12,12 @@ function FilterButton(props) {
         <span className="visually-hidden"> tasks</span>
     </button>
     
+}
+
+FilterButton.propTypes = {
+    name: PropTypes.string.isRequired,
+    isPressed: PropTypes.bool.isRequired,
+    setFilter: PropTypes.func.isRequired,
 }
 
 export default FilterButton;

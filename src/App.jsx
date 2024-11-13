@@ -3,6 +3,7 @@ import Form from "./components/Form";
 import FilterButton from "./components/FilterButton";
 import { useState } from "react";
 import { nanoid } from "nanoid";
+import { PropTypes } from "prop-types"
 
 const FILTER_MAP = {
     All: () => true,
@@ -97,5 +98,9 @@ function App(props) {
     }
 }
   
+App.propTypes = { 
+    tasks: PropTypes.any,
+}
+
 export default App;
   

@@ -1,6 +1,7 @@
 import { useState } from "react";
+import { PropTypes } from "prop-types"
 
-function TodoItem(props) {
+function TodoItem (props) {
     const [isEditing, setEditing] = useState(false);
     const [newName, setNewName] = useState("");
 
@@ -78,10 +79,15 @@ function TodoItem(props) {
       
 
     return isEditing? editingTemplate : viewTemplate;
+}
 
-
-   
-    
+TodoItem.propTypes = {
+    name: PropTypes.string.isRequired,
+    id: PropTypes.string.isRequired,
+    completed: PropTypes.bool.isRequired,
+    deleteTask: PropTypes.func.isRequired,
+    toggleTaskCompleted: PropTypes.func.isRequired,
+    editTask: PropTypes.func.isRequired,
 }
 
 export default TodoItem;

@@ -1,11 +1,12 @@
 import { useState } from "react";
+import { PropTypes} from "prop-types"
 
 function Form(props){
     const [name, setName] = useState("");
 
     function handleSubmit(event){
         event.preventDefault();
-        props.onSubmit?.(name)
+        props.onSubmit(name)
         setName("");
     }
 
@@ -32,6 +33,10 @@ function Form(props){
       Add
     </button>
   </form>
+}
+
+Form.propTypes = {
+    onSubmit: PropTypes.func.isRequired,
 }
 
 export default Form;
