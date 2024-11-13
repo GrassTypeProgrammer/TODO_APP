@@ -43,21 +43,19 @@ function App(props) {
     );
  
     function createListItems(tasks) {
-      const listItems = [];
-  
-      for (let index = 0; index < tasks.length; index++) {
-          const task = tasks[index];
-          listItems.push(
-          <TodoItem 
-            id={task.id} 
-            name={task.name} 
-            completed={task.completed} 
-            key={task.id}
-            toggleTaskCompleted={toggleTaskCompleted}
-            onDeleteTask={deleteTask}
-            editTask={editTask}
-        />)
-      }
+        const listItems = tasks
+            .filter(FILTER_MAP[filter])
+            .map((task) => (
+              <TodoItem
+                id={task.id}
+                name={task.name}
+                completed={task.completed}
+                key={task.id}
+                toggleTaskCompleted={toggleTaskCompleted}
+                deleteTask={deleteTask}
+                editTask={editTask}
+            />
+        ));
   
       return listItems;
     }
