@@ -1,7 +1,7 @@
 import TodoItem from "./components/TodoItem";
 import Form from "./components/Form";
 import FilterButton from "./components/FilterButton";
-import { useState } from "react";
+import { useState, useRef, useEffect  } from "react";
 import { nanoid } from "nanoid";
 import { PropTypes } from "prop-types"
 
@@ -9,13 +9,22 @@ const FILTER_MAP = {
     All: () => true,
     Active: (task) => !task.completed,
     Completed: (task) => task.completed,
-  };
+};
+
+function usePrevious(value) {
+    const ref = useRef();
+    useEffect(() => {
+      ref.current = value;
+    });
+    return ref.current;
+}
 
 function App(props) {
     
     const [tasks, setTasks] = useState(props.tasks);
     const [filter, setFilter] = useState("All");
     const FILTER_NAMES = Object.keys(FILTER_MAP);
+    const listHeadingRef = useRef(null);
 
     const filterList = FILTER_NAMES.map((name) => (
         <FilterButton 
@@ -26,6 +35,14 @@ function App(props) {
         />
       ));
 
+    const prevTaskLength = usePrevious(tasks.length);
+      
+    useEffect(() => {
+        if (tasks.length < prevTaskLength) {
+          listHeadingRef.current.focus();
+        }
+      }, [tasks.length, prevTaskLength]);
+
     return (
       <div className="todoapp stack-large">
         <h1>TODO</h1>
@@ -33,7 +50,7 @@ function App(props) {
         <div className="filters btn-group stack-exception">
            {filterList}
         </div>
-        <h2 id="list-heading">3 tasks remaining</h2>
+        <h2 id="list-heading" tabIndex="-1" ref={listHeadingRef}>3 tasks remaining</h2>
         <ul
           role="list"
           className="todo-list stack-large stack-exception"

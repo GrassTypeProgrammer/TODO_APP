@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useState, useRef, useEffect} from "react";
 import { PropTypes } from "prop-types"
 
 function TodoItem (props) {
     const [isEditing, setEditing] = useState(false);
     const [newName, setNewName] = useState("");
-
+    const editFieldRef = useRef(null);
+    const editButtonRef = useRef(null);
+    const wasEditing = usePrevious(isEditing);
+    
     function handleChange(e) {
         setNewName(e.target.value);
       }
@@ -14,8 +17,8 @@ function TodoItem (props) {
         props.editTask(props.id, newName);
         setNewName("");
         setEditing(false);
-        alert('submit')
     }
+
 
     const editingTemplate = (
         <form className="stack-small" onSubmit={handleSubmit}>
@@ -28,6 +31,7 @@ function TodoItem (props) {
                 className="todo-text" 
                 type="text" 
                 onChange={handleChange} 
+                ref={editFieldRef}
             />
           </div>
           <div className="btn-group">
@@ -64,7 +68,12 @@ function TodoItem (props) {
             </label>
           </div>
           <div className="btn-group">
-            <button type="button" className="btn" onClick={() => {setEditing(true)}}>
+            <button 
+                type="button" 
+                className="btn" 
+                onClick={() => {setEditing(true)}}
+                ref={editButtonRef}
+            >
               Edit <span className="visually-hidden">{props.name}</span>
             </button>
             <button
@@ -75,9 +84,25 @@ function TodoItem (props) {
             </button>
           </div>
         </div>
-      );
-      
+    );
+    
+    function usePrevious(value) {
+        const ref = useRef();
+        useEffect(() => {
+          ref.current = value;
+        });
 
+        return ref.current;
+    }
+
+    useEffect(() => {
+        if (!wasEditing && isEditing) {
+            editFieldRef.current.focus();
+        } 
+        else if (wasEditing && !isEditing) {
+            editButtonRef.current.focus();
+        }
+    }, [wasEditing, isEditing]);
     return isEditing? editingTemplate : viewTemplate;
 }
 
