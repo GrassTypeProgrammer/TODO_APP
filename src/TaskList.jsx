@@ -17,6 +17,7 @@ const FILTER_MAP = {
 function TaskList(props){
     const [tasks, setTasks] = useState(props.tasks);
     const [filter, setFilter] = useState("All");
+    const [selectedTaskID, setSelectedTaskID] = useState(null);
     const FILTER_NAMES = Object.keys(FILTER_MAP);
     const listHeadingRef = useRef(null);
 
@@ -67,6 +68,7 @@ function TaskList(props){
                 deleteTask={deleteTask}
                 editTask={editTask}
                 onSelectItem={onSelectItem}
+                isCurrent={selectedTaskID === task.id}
             />
         ));
   
@@ -113,6 +115,7 @@ function TaskList(props){
         for (let index = 0; index < tasks.length; index++) {
             const task = tasks[index];
             if(task.id == id){
+                setSelectedTaskID(id)
                 props.onSelectItem(task);
                 break;
             }

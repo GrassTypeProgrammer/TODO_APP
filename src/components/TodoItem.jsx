@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect} from "react";
 import { PropTypes } from "prop-types"
 import { usePrevious } from "../Utils";
+import './../styles/TodoItem.css'
+
 
 function TodoItem (props) {
     const [isEditing, setEditing] = useState(false);
@@ -23,7 +25,7 @@ function TodoItem (props) {
 
     const editingTemplate = (
         <form className="stack-small" onSubmit={handleSubmit} >
-          <div className="form-group" >
+          <div className="form-group"  >
             <label className="todo-label" htmlFor={props.id}>
               New name for {props.name}
             </label>
@@ -56,8 +58,8 @@ function TodoItem (props) {
       );
       
       const viewTemplate = (
-        <div className="stack-small" onClick={() => props.onSelectItem(props.id)}>
-          <div className="c-cb">
+        <div className="TodoItem_root stack-small" onClick={() => props.onSelectItem(props.id)} aria-current={props.isCurrent}>
+          <div className="TodoItem_content c-cb">
             <input
               id={props.id}
               type="checkbox"
@@ -106,6 +108,7 @@ TodoItem.propTypes = {
     toggleTaskCompleted: PropTypes.func.isRequired,
     editTask: PropTypes.func.isRequired,
     onSelectItem: PropTypes.func.isRequired,
+    isCurrent: PropTypes.bool,
 }
 
 export default TodoItem;

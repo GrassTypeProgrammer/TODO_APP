@@ -1,0 +1,17 @@
+.TodoItem_root{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.TodoItem_root[aria-current="true"] {
+    border-color: #4d4d4d;
+    border-style: solid;
+    border-width: 1px;
+}
+
+.TodoItem_content{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
