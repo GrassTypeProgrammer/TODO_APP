@@ -1,0 +1,23 @@
+.Divider_root{
+    background-color: black;
+    position: relative;
+    opacity: 0.2;
+}
+
+.Divider_root.vertical{
+    top: 5%;
+    bottom: 5%;
+    height: 90%;
+    width: 0.2rem;
+    margin-left: 3rem;
+    margin-right: 3rem;
+}
+
+.Divider_root.horizontal{
+    left: 5%;
+    right: 5%;
+    width: 90%;
+    height: 0.2rem;
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+}

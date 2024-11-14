@@ -1,0 +1,19 @@
+.TodoApp_root{
+    --padding: 2rem;
+    --margin: 3rem;
+
+    position: absolute;
+    top: var(--margin);
+    bottom: var(--margin);
+    left: var(--margin);
+    right: var(--margin);
+    padding: var(--padding); 
+
+    display: flex;
+    flex-direction: horizontal;
+    
+    background-color: #fff;
+    box-shadow:
+        0 2px 4px 0 rgb(0 0 0 / 20%),
+        0 2.5rem 5rem 0 rgb(0 0 0 / 10%);
+}
