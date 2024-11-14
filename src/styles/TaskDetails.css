@@ -1,3 +1,31 @@
 .TaskDetails_root{
     flex: 2;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+}
+
+.TaskDetails_header{
+    text-align: center;
+}
+
+.TaskDetails_descriptionBox{
+    flex: 1;
+    border-style: solid;
+    border-color: black;
+    border-width: 1px;
+    padding: 2rem;
+}
+
+.TaskDetails_footer{
+    height: 4rem;
+    width: auto;
+    gap: 2rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.TaskDetails_button{
+    width: 15rem;
 }

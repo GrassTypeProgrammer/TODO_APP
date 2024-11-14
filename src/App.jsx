@@ -9,7 +9,7 @@ function App(props) {
     return <div className="TodoApp_root">
         <TaskList tasks={props.tasks}/>
         <Divider/>
-        <TaskDetails/>
+        <TaskDetails label="Test" description="Test Description"/>
     </div>
 }
   
