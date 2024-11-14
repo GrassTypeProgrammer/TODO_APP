@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect} from "react";
 import { PropTypes } from "prop-types"
+import { usePrevious } from "../Utils";
 
 function TodoItem (props) {
     const [isEditing, setEditing] = useState(false);
@@ -86,15 +87,6 @@ function TodoItem (props) {
         </div>
     );
     
-    function usePrevious(value) {
-        const ref = useRef();
-        useEffect(() => {
-          ref.current = value;
-        });
-
-        return ref.current;
-    }
-
     useEffect(() => {
         if (!wasEditing && isEditing) {
             editFieldRef.current.focus();

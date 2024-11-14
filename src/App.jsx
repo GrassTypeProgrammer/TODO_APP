@@ -4,20 +4,13 @@ import FilterButton from "./components/FilterButton";
 import { useState, useRef, useEffect  } from "react";
 import { nanoid } from "nanoid";
 import { PropTypes } from "prop-types"
+import { usePrevious } from "./Utils";
 
 const FILTER_MAP = {
     All: () => true,
     Active: (task) => !task.completed,
     Completed: (task) => task.completed,
 };
-
-function usePrevious(value) {
-    const ref = useRef();
-    useEffect(() => {
-      ref.current = value;
-    });
-    return ref.current;
-}
 
 function App(props) {
     
@@ -50,7 +43,7 @@ function App(props) {
         <div className="filters btn-group stack-exception">
            {filterList}
         </div>
-        <h2 id="list-heading" tabIndex="-1" ref={listHeadingRef}>3 tasks remaining</h2>
+        <h2 id="list-heading" tabIndex="-1" ref={listHeadingRef}>{tasks.filter(FILTER_MAP["Active"]).length} tasks remaining</h2>
         <ul
           role="list"
           className="todo-list stack-large stack-exception"
