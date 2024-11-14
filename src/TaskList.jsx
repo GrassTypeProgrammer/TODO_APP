@@ -66,6 +66,7 @@ function TaskList(props){
                 toggleTaskCompleted={toggleTaskCompleted}
                 deleteTask={deleteTask}
                 editTask={editTask}
+                onSelectItem={onSelectItem}
             />
         ));
   
@@ -87,7 +88,7 @@ function TaskList(props){
     function toggleTaskCompleted(id){
         const updatedTasks = tasks.map((task) => {
             if (id === task.id) {
-              return { ...task, completed: !task.completed };
+                return { ...task, completed: !task.completed };
             }
 
             return task;
@@ -107,10 +108,22 @@ function TaskList(props){
 
         setTasks(editedTasks);
     }
+
+    function onSelectItem(id){
+        for (let index = 0; index < tasks.length; index++) {
+            const task = tasks[index];
+            if(task.id == id){
+                props.onSelectItem(task);
+                break;
+            }
+
+        }
+    }
 }
 
 TaskList.propTypes = { 
     tasks: PropTypes.any,
+    onSelectItem: PropTypes.func.isRequired,
 }
 
 export default TaskList;

@@ -22,8 +22,8 @@ function TodoItem (props) {
 
 
     const editingTemplate = (
-        <form className="stack-small" onSubmit={handleSubmit}>
-          <div className="form-group">
+        <form className="stack-small" onSubmit={handleSubmit} >
+          <div className="form-group" >
             <label className="todo-label" htmlFor={props.id}>
               New name for {props.name}
             </label>
@@ -36,7 +36,7 @@ function TodoItem (props) {
             />
           </div>
           <div className="btn-group">
-            <button 
+            {/* <button 
                 type="button" 
                 className="btn todo-cancel"
                 onClick={() => {setEditing(false)}}
@@ -50,13 +50,13 @@ function TodoItem (props) {
                 >
               Save
               <span className="visually-hidden">new name for {props.name}</span>
-            </button>
+            </button> */}
           </div>
         </form>
       );
       
       const viewTemplate = (
-        <div className="stack-small">
+        <div className="stack-small" onClick={() => props.onSelectItem(props.id)}>
           <div className="c-cb">
             <input
               id={props.id}
@@ -69,7 +69,7 @@ function TodoItem (props) {
             </label>
           </div>
           <div className="btn-group">
-            <button 
+            {/* <button 
                 type="button" 
                 className="btn" 
                 onClick={() => {setEditing(true)}}
@@ -82,7 +82,7 @@ function TodoItem (props) {
               className="btn btn__danger"
               onClick={() => props.deleteTask(props.id)}>
               Delete <span className="visually-hidden">{props.name}</span>
-            </button>
+            </button> */}
           </div>
         </div>
     );
@@ -105,6 +105,7 @@ TodoItem.propTypes = {
     deleteTask: PropTypes.func.isRequired,
     toggleTaskCompleted: PropTypes.func.isRequired,
     editTask: PropTypes.func.isRequired,
+    onSelectItem: PropTypes.func.isRequired,
 }
 
 export default TodoItem;
