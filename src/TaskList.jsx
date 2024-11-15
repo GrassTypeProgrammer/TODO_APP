@@ -2,7 +2,6 @@ import TodoItem from "./components/TodoItem";
 import Form from "./components/Form";
 import FilterButton from "./components/FilterButton";
 import { useState, useRef, useEffect  } from "react";
-import { nanoid } from "nanoid";
 import { PropTypes } from "prop-types"
 import { usePrevious } from "./Utils";
 import './styles/TaskList.css'
@@ -15,7 +14,7 @@ const FILTER_MAP = {
 };
 
 function TaskList(props){
-    const [tasks, setTasks] = useState(updateCurrentTask());
+    const [tasks, setTasks] = useState(props.tasks);
     const [filter, setFilter] = useState("All");
     const [selectedTaskID, setSelectedTaskID] = useState(null);
     const FILTER_NAMES = Object.keys(FILTER_MAP);
@@ -36,7 +35,12 @@ function TaskList(props){
         if (tasks.length < prevTaskLength) {
           listHeadingRef.current.focus();
         }
-      }, [tasks.length, prevTaskLength]);
+
+        if(tasks != props.tasks){
+
+            setTasks(props.tasks)
+        }
+      }, [tasks.length, prevTaskLength, props.tasks, tasks]);
 
     return (
       <div className="TaskList_root">
@@ -64,9 +68,7 @@ function TaskList(props){
                 name={task.name}
                 completed={task.completed}
                 key={task.id}
-                toggleTaskCompleted={toggleTaskCompleted}
-                deleteTask={deleteTask}
-                editTask={editTask}
+                toggleTaskCompleted={() => {props.toggleTaskCompleted(task.id)}}
                 onSelectItem={onSelectItem}
                 isCurrent={selectedTaskID === task.id}
             />
@@ -77,38 +79,8 @@ function TaskList(props){
 
     function addTask(name){
         if(name != undefined && name != ""){
-           const newTask = { id: `todo_${nanoid()}`, name, completed: false };
-           setTasks([...tasks, newTask]);
+            props.addTask(name);
         }
-    }
-    
-    function deleteTask(id){
-        const remainingTasks = tasks.filter((task) => id !== task.id);
-        setTasks(remainingTasks);
-    }
-
-    function toggleTaskCompleted(id){
-        const updatedTasks = tasks.map((task) => {
-            if (id === task.id) {
-                return { ...task, completed: !task.completed };
-            }
-
-            return task;
-        });
-
-        setTasks(updatedTasks);
-    }
-
-    function editTask(id, newName) {
-        const editedTasks = tasks.map((task) => {
-            if (id === task.id) {
-                return { ...task, name: newName };
-            }
-            
-            return task;
-        })
-
-        setTasks(editedTasks);
     }
 
     function onSelectItem(id){
@@ -121,30 +93,14 @@ function TaskList(props){
             }
         }
     }
-
-    function updateCurrentTask(){
-        const updatedTasks = props.tasks;
-        if(props.currentTaskUpdated){
-            const currentTaskUpdated = props.currentTaskUpdated;
-            
-            for (let index = 0; index < updatedTasks.length; index++) {
-                const task = updatedTasks[index];
-                
-                if(task.id == currentTaskUpdated.id){
-                    updatedTasks[index] = currentTaskUpdated;
-                    break;
-                }
-            }
-        }
-
-        return updatedTasks;
-    }
 }
 
 TaskList.propTypes = { 
     tasks: PropTypes.any,
-    onSelectItem: PropTypes.func.isRequired,
     currentTaskUpdated: PropTypes.any,
+    onSelectItem: PropTypes.func.isRequired,
+    toggleTaskCompleted: PropTypes.func.isRequired,
+    addTask: PropTypes.func.isRequired,
 }
 
 export default TaskList;

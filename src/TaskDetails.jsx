@@ -4,9 +4,6 @@ import { usePrevious } from "./Utils";
 import './styles/TaskDetails.css'
 
 
-// TODO Next: 
-//      - Delete button
-
 function TaskDetails(props){
     const currentTask = props.currentTask;
     const [isEditing, setEditing] = useState(false);
@@ -32,7 +29,6 @@ function TaskDetails(props){
     }, [wasEditing, isEditing]);
 
     // TODO: make this more readable
-    // return currentTask == undefined? noTaskTemplate : isEditing ? editingTemplate : viewTemplate;
     return <form className="TaskDetails_root" onSubmit={handleSubmit}>
         {currentTask != undefined &&
         <>
@@ -67,7 +63,6 @@ function TaskDetails(props){
             <br/>
             <div className='TaskDetails_footer'>
                 {isEditing ? 
-                // TODO: the save button needs to actually save the changes
                     <button 
                         type="button" 
                         className="TaskDetails_button btn todo-cancel"
@@ -95,7 +90,11 @@ function TaskDetails(props){
                         Cancel
                     </button>
                     :
-                    <button type="button" className="TaskDetails_button btn btn__danger" >
+                    <button 
+                        type="button" 
+                        className="TaskDetails_button btn btn__danger" 
+                        onClick={() => {props.deleteTask(currentTask.id)}}
+                    >
                         Delete
                     </button>
                 }
@@ -131,6 +130,7 @@ function TaskDetails(props){
 TaskDetails.propTypes = {
     currentTask: PropTypes.object,
     editTask: PropTypes.func.isRequired,
+    deleteTask: PropTypes.func.isRequired,
 }
 
 
