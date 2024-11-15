@@ -1,15 +1,11 @@
-import { useState, useRef, useEffect} from "react";
+import { useState} from "react";
 import { PropTypes } from "prop-types"
-import { usePrevious } from "../Utils";
 import './../styles/TodoItem.css'
 
 
 function TodoItem (props) {
     const [isEditing, setEditing] = useState(false);
     const [newName, setNewName] = useState("");
-    const editFieldRef = useRef(null);
-    const editButtonRef = useRef(null);
-    const wasEditing = usePrevious(isEditing);
     
     function handleChange(e) {
         setNewName(e.target.value);
@@ -34,7 +30,6 @@ function TodoItem (props) {
                 className="todo-text" 
                 type="text" 
                 onChange={handleChange} 
-                ref={editFieldRef}
             />
           </div>
           <div className="btn-group">
@@ -58,15 +53,6 @@ function TodoItem (props) {
           
         </div>
     );
-    
-    useEffect(() => {
-        if (!wasEditing && isEditing) {
-            editFieldRef.current.focus();
-        } 
-        else if (wasEditing && !isEditing) {
-            editButtonRef.current.focus();
-        }
-    }, [wasEditing, isEditing]);
     
     return isEditing? editingTemplate : viewTemplate;
 }

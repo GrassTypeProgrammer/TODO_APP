@@ -1,7 +1,11 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import PropTypes from 'prop-types';
+import { usePrevious } from "./Utils";
 import './styles/TaskDetails.css'
 
+
+// TODO Next: 
+//      - Delete button
 
 function TaskDetails(props){
     const currentTask = props.currentTask;
@@ -10,11 +14,22 @@ function TaskDetails(props){
     const [newDescription, setNewDescription] = useState('');
     const [descriptionChanged, setDescriptionChanged] = useState(false);
     const [nameChanged, setNameChanged] = useState(false);
+    const wasEditing = usePrevious(isEditing);
     const editTitleFieldRef = useRef(null);
-    const editDescriptionFieldRef = useRef(null);
+    const editButtonRef = useRef(null);
 
     {/* TODO: Center this */}
     const noTaskTemplate = <label>No task selected</label>
+
+
+    useEffect(() => {
+        if (!wasEditing && isEditing) {
+            editTitleFieldRef.current.focus();
+        } 
+        else if (wasEditing && !isEditing) {
+            editButtonRef.current.focus();
+        }
+    }, [wasEditing, isEditing]);
 
     // TODO: make this more readable
     // return currentTask == undefined? noTaskTemplate : isEditing ? editingTemplate : viewTemplate;
@@ -42,7 +57,6 @@ function TaskDetails(props){
                     className="TaskDetails_descriptionBox" 
                     type="text" 
                     onChange={handleChangeDescription} 
-                    ref={editDescriptionFieldRef}
                     defaultValue={currentTask.description}
                 />
                 :
@@ -62,7 +76,12 @@ function TaskDetails(props){
                         Save
                     </button>
                     :
-                    <button type="button" className="TaskDetails_button btn " onClick={() => {setEditing(true)}}>
+                    <button 
+                        type="button" 
+                        className="TaskDetails_button btn " 
+                        onClick={() => {setEditing(true)}}
+                        ref={editButtonRef}
+                    >
                         Edit
                     </button>
                 }
