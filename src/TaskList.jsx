@@ -15,7 +15,7 @@ const FILTER_MAP = {
 };
 
 function TaskList(props){
-    const [tasks, setTasks] = useState(props.tasks);
+    const [tasks, setTasks] = useState(updateCurrentTask());
     const [filter, setFilter] = useState("All");
     const [selectedTaskID, setSelectedTaskID] = useState(null);
     const FILTER_NAMES = Object.keys(FILTER_MAP);
@@ -119,14 +119,32 @@ function TaskList(props){
                 props.onSelectItem(task);
                 break;
             }
-
         }
+    }
+
+    function updateCurrentTask(){
+        const updatedTasks = props.tasks;
+        if(props.currentTaskUpdated){
+            const currentTaskUpdated = props.currentTaskUpdated;
+            
+            for (let index = 0; index < updatedTasks.length; index++) {
+                const task = updatedTasks[index];
+                
+                if(task.id == currentTaskUpdated.id){
+                    updatedTasks[index] = currentTaskUpdated;
+                    break;
+                }
+            }
+        }
+
+        return updatedTasks;
     }
 }
 
 TaskList.propTypes = { 
     tasks: PropTypes.any,
     onSelectItem: PropTypes.func.isRequired,
+    currentTaskUpdated: PropTypes.any,
 }
 
 export default TaskList;

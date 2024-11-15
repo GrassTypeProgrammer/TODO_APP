@@ -38,21 +38,6 @@ function TodoItem (props) {
             />
           </div>
           <div className="btn-group">
-            {/* <button 
-                type="button" 
-                className="btn todo-cancel"
-                onClick={() => {setEditing(false)}}
-           >
-              Cancel
-              <span className="visually-hidden">renaming {props.name}</span>
-            </button>
-            <button 
-                type="submit" 
-                className="btn btn__primary todo-edit" 
-                >
-              Save
-              <span className="visually-hidden">new name for {props.name}</span>
-            </button> */}
           </div>
         </form>
       );
@@ -70,22 +55,7 @@ function TodoItem (props) {
               {props.name}
             </label>
           </div>
-          <div className="btn-group">
-            {/* <button 
-                type="button" 
-                className="btn" 
-                onClick={() => {setEditing(true)}}
-                ref={editButtonRef}
-            >
-              Edit <span className="visually-hidden">{props.name}</span>
-            </button>
-            <button
-              type="button"
-              className="btn btn__danger"
-              onClick={() => props.deleteTask(props.id)}>
-              Delete <span className="visually-hidden">{props.name}</span>
-            </button> */}
-          </div>
+          
         </div>
     );
     
@@ -97,6 +67,7 @@ function TodoItem (props) {
             editButtonRef.current.focus();
         }
     }, [wasEditing, isEditing]);
+    
     return isEditing? editingTemplate : viewTemplate;
 }
 

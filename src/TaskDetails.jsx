@@ -1,38 +1,117 @@
+import { useState, useRef } from "react";
 import PropTypes from 'prop-types';
 import './styles/TaskDetails.css'
 
 
 function TaskDetails(props){
     const currentTask = props.currentTask;
+    const [isEditing, setEditing] = useState(false);
+    const [newName, setNewName] = useState('');
+    const [newDescription, setNewDescription] = useState('');
+    const [descriptionChanged, setDescriptionChanged] = useState(false);
+    const [nameChanged, setNameChanged] = useState(false);
+    const editTitleFieldRef = useRef(null);
+    const editDescriptionFieldRef = useRef(null);
 
-        return <div className="TaskDetails_root">
-            {currentTask != undefined &&
-            <>
+    {/* TODO: Center this */}
+    const noTaskTemplate = <label>No task selected</label>
+
+    // TODO: make this more readable
+    // return currentTask == undefined? noTaskTemplate : isEditing ? editingTemplate : viewTemplate;
+    return <form className="TaskDetails_root" onSubmit={handleSubmit}>
+        {currentTask != undefined &&
+        <>
+            {isEditing ? 
+                <input 
+                    id={currentTask != undefined? currentTask.id : 0} 
+                    // Does this need todo-text?
+                    className="todo-text TaskDetails_header" 
+                    type="text" 
+                    onChange={handleChangeTitle} 
+                    ref={editTitleFieldRef}
+                    defaultValue={currentTask.name}
+                />
+                :
                 <h2 className='TaskDetails_header'>{currentTask.name}</h2>
-                <br/>
+            }
+            <br/>
+            {isEditing ? 
+                <input  
+                    id={currentTask != undefined? currentTask.id : 0} 
+                    // Does this need todo-text?
+                    className="TaskDetails_descriptionBox" 
+                    type="text" 
+                    onChange={handleChangeDescription} 
+                    ref={editDescriptionFieldRef}
+                    defaultValue={currentTask.description}
+                />
+                :
                 <div className='TaskDetails_descriptionBox'>
                     <p>{currentTask.description}</p>
                 </div>
-                <br/>
-                <div className='TaskDetails_footer'>
-                    <button type="button"  className="TaskDetails_button btn " >
+            }
+            <br/>
+            <div className='TaskDetails_footer'>
+                {isEditing ? 
+                // TODO: the save button needs to actually save the changes
+                    <button 
+                        type="button" 
+                        className="TaskDetails_button btn todo-cancel"
+                        onClick={handleSubmit}
+                    >
+                        Save
+                    </button>
+                    :
+                    <button type="button" className="TaskDetails_button btn " onClick={() => {setEditing(true)}}>
                         Edit
                     </button>
-                    <button type="button"  className="TaskDetails_button btn btn__danger" >
-                        delete
+                }
+
+                {isEditing ? 
+                    <button 
+                        type="button" 
+                        className="TaskDetails_button btn" 
+                        onClick={() => {setEditing(false)}}
+                    >
+                        Cancel
                     </button>
-                </div>
-            </>
+                    :
+                    <button type="button" className="TaskDetails_button btn btn__danger" >
+                        Delete
+                    </button>
+                }
+            </div>
+        </>
         }
-        {/* TODO: Center this */}
-        {currentTask == undefined &&
-            <label>No task selected</label>
-        }
-    </div>
+    </form>
+
+    function handleChangeTitle(e) {
+        setNewName(e.target.value);
+        setNameChanged(true);
+    }
+
+    function handleChangeDescription(e){
+        setNewDescription(e.target.value);
+        setDescriptionChanged(true);
+    }
+
+    function handleSubmit(e){
+        e.preventDefault();
+        props.editTask(
+            nameChanged ? newName : currentTask.name, 
+            descriptionChanged ? newDescription : currentTask.description, 
+        );
+        setNewName("");
+        setNewDescription("");
+        setEditing(false);
+        setNameChanged(false);
+        setDescriptionChanged(false);
+    }
 }
 
 TaskDetails.propTypes = {
     currentTask: PropTypes.object,
+    editTask: PropTypes.func.isRequired,
 }
 
 
