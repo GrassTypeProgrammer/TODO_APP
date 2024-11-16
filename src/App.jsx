@@ -3,14 +3,20 @@ import TaskList from "./TaskList";
 import {PropTypes} from "prop-types"
 import './styles/TodoApp.css'
 import Divider from "./components/Divider";
-import { useState  } from "react";
+import { useEffect, useState  } from "react";
 import { nanoid } from "nanoid";
 
+// dataTemplate
+// { id: "todo-0", name: "Eat", completed: true, description: "description-0"}
 
-function App(props) {
-    const [tasks, setTasks] = useState(props.tasks);
+function App() {
+    const [tasks, setTasks] = useState([]);
     const [currentTask, setCurrentTask] = useState(null);
     const [addingNewTask, setAddingNewTask] = useState(false);
+
+    useEffect(() => {
+        loadData();
+    },[]);
 
     if(tasks == undefined){
       return <div/>
@@ -24,7 +30,6 @@ function App(props) {
                 currentTaskUpdated={currentTask} 
                 onSelectItem={onSelectItem} 
                 toggleTaskCompleted={toggleTaskCompleted}
-                // addTask={addTask}
                 />
             <button type="submit" className="btn btn__primary btn__lg" onClick={addTask}>
                 Add
@@ -62,12 +67,14 @@ function App(props) {
         
         setCurrentTask(editedTask);
         setTasks(updatedTasks);
+        saveTasksData(updatedTasks);
     }
 
     function deleteTask(id){
         const remainingTasks = tasks.filter(task => id !== task.id);
         setCurrentTask(null);
         setTasks(remainingTasks);
+        deleteTaskData(remainingTasks, id);
     }
 
     function toggleTaskCompleted(id){
@@ -93,11 +100,67 @@ function App(props) {
         setCurrentTask(newTask);
         setAddingNewTask(true);
         setTasks([...tasks, newTask]);
+        saveTasksData(tasks);
     }
 
     function stopAddingNewTask(){
         setAddingNewTask(false);
     }
+
+    //#region Save/Load
+    function saveTasksData(tasks) {
+        const taskIDs = [];
+
+        for (let index = 0; index < tasks.length; index++) {
+            const task = tasks[index];
+            const taskString = JSON.stringify(task);
+            localStorage.setItem(task.id, taskString);
+            taskIDs.push(task.id);
+        }
+
+        const taskIDsString = JSON.stringify(taskIDs);
+        localStorage.setItem('taskIDs', taskIDsString);
+    }
+
+    function deleteTaskData(tasks, IDToDelete){
+        localStorage.removeItem(IDToDelete);
+        saveTaskIDs(tasks);
+    }
+
+    function saveTaskIDs(tasks){
+        const taskIDs = [];
+
+        for (let index = 0; index < tasks.length; index++) {
+            const task = tasks[index];
+            taskIDs.push(task.id);
+        }
+
+        const taskIDsString = JSON.stringify(taskIDs);
+        localStorage.setItem('taskIDs', taskIDsString);
+    }
+
+    function loadData(){
+        const taskIDsString = localStorage.getItem('taskIDs');
+        if(taskIDsString != undefined && taskIDsString != ''){
+            const taskIDs = JSON.parse(taskIDsString);
+            const loadedTasks = [];
+            
+            if(taskIDs != undefined){
+                for (let index = 0; index < taskIDs.length; index++) {
+                    const taskID = taskIDs[index];
+                    const taskString = localStorage.getItem(taskID);
+                    const task = JSON.parse(taskString);
+                    if(task != null){
+                        loadedTasks.push(task);
+                    }
+                }
+                
+                setTasks(loadedTasks);
+            }
+        }
+    }
+
+    //#endregion
 }
   
 App.propTypes = {
