@@ -1,5 +1,4 @@
 import TodoItem from "./components/TodoItem";
-import Form from "./components/Form";
 import FilterButton from "./components/FilterButton";
 import { useState, useRef, useEffect  } from "react";
 import { PropTypes } from "prop-types"
@@ -45,7 +44,6 @@ function TaskList(props){
     return (
       <div className="TaskList_root">
         <h1>TODO</h1>
-        <Form onSubmit={addTask}/>
         <div className="filters btn-group stack-exception">
            {filterList}
         </div>
@@ -77,12 +75,6 @@ function TaskList(props){
       return listItems;
     }
 
-    function addTask(name){
-        if(name != undefined && name != ""){
-            props.addTask(name);
-        }
-    }
-
     function onSelectItem(id){
         for (let index = 0; index < tasks.length; index++) {
             const task = tasks[index];
@@ -100,7 +92,6 @@ TaskList.propTypes = {
     currentTaskUpdated: PropTypes.any,
     onSelectItem: PropTypes.func.isRequired,
     toggleTaskCompleted: PropTypes.func.isRequired,
-    addTask: PropTypes.func.isRequired,
 }
 
 export default TaskList;

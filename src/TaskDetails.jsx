@@ -16,7 +16,7 @@ function TaskDetails(props){
     const editButtonRef = useRef(null);
 
     {/* TODO: Center this */}
-    const noTaskTemplate = <label>No task selected</label>
+    // const noTaskTemplate = <label>No task selected</label>
 
 
     useEffect(() => {
@@ -26,7 +26,11 @@ function TaskDetails(props){
         else if (wasEditing && !isEditing) {
             editButtonRef.current.focus();
         }
-    }, [wasEditing, isEditing]);
+
+        if(props.addingNewTask){
+            setEditing(true);
+        }
+    }, [wasEditing, isEditing, props.addingNewTask]);
 
     // TODO: make this more readable
     return <form className="TaskDetails_root" onSubmit={handleSubmit}>
@@ -85,7 +89,7 @@ function TaskDetails(props){
                     <button 
                         type="button" 
                         className="TaskDetails_button btn" 
-                        onClick={() => {setEditing(false)}}
+                        onClick={onCancelTask}
                     >
                         Cancel
                     </button>
@@ -113,6 +117,14 @@ function TaskDetails(props){
         setDescriptionChanged(true);
     }
 
+    function onCancelTask(){
+        setEditing(false);
+
+        if(props.addingNewTask){
+            props.stopAddingNewTask()
+        }
+    }
+
     function handleSubmit(e){
         e.preventDefault();
         props.editTask(
@@ -124,13 +136,19 @@ function TaskDetails(props){
         setEditing(false);
         setNameChanged(false);
         setDescriptionChanged(false);
+        
+        if(props.addingNewTask){
+            props.stopAddingNewTask()
+        }
     }
 }
 
 TaskDetails.propTypes = {
     currentTask: PropTypes.object,
+    addingNewTask: PropTypes.bool,
     editTask: PropTypes.func.isRequired,
     deleteTask: PropTypes.func.isRequired,
+    stopAddingNewTask: PropTypes.func.isRequired,
 }
 
 

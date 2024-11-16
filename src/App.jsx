@@ -10,25 +10,33 @@ import { nanoid } from "nanoid";
 function App(props) {
     const [tasks, setTasks] = useState(props.tasks);
     const [currentTask, setCurrentTask] = useState(null);
-  
+    const [addingNewTask, setAddingNewTask] = useState(false);
+
     if(tasks == undefined){
       return <div/>
     }
 
     return <div className="TodoApp_root">
         {/* TODO: Perhaps move the editing of tasks into this component so that you don't have to pass in the currentUpdatedTask */}
-        <TaskList 
-            tasks={tasks} 
-            currentTaskUpdated={currentTask} 
-            onSelectItem={onSelectItem} 
-            toggleTaskCompleted={toggleTaskCompleted}
-            addTask={addTask}
-        />
+        <div className="column">
+            <TaskList 
+                tasks={tasks} 
+                currentTaskUpdated={currentTask} 
+                onSelectItem={onSelectItem} 
+                toggleTaskCompleted={toggleTaskCompleted}
+                // addTask={addTask}
+                />
+            <button type="submit" className="btn btn__primary btn__lg" onClick={addTask}>
+                Add
+            </button>
+        </div>
         <Divider/>
         <TaskDetails 
             currentTask={currentTask} 
             editTask={editTask}
             deleteTask={deleteTask}
+            addingNewTask={addingNewTask}
+            stopAddingNewTask={stopAddingNewTask}
         />
     </div>
 
@@ -37,14 +45,23 @@ function App(props) {
     }
 
     function editTask(newName, newDescription){
-        const task = {
+        const editedTask = {
             id: currentTask.id,
             completed: currentTask.completed,
             name: newName,
             description: newDescription,
         }
 
-        setCurrentTask(task);
+        const updatedTasks = tasks.map((task) => {
+            if (editedTask.id === task.id) {
+                return { ...task, name: editedTask.name, description: editedTask.description };
+            }
+            
+            return task;
+        });
+        
+        setCurrentTask(editedTask);
+        setTasks(updatedTasks);
     }
 
     function deleteTask(id){
@@ -65,11 +82,21 @@ function App(props) {
         setTasks(updatedTasks);
     }
 
-    function addTask(name){
-        if(name != undefined && name != ""){
-           const newTask = { id: `todo_${nanoid()}`, name, completed: false };
-           setTasks([...tasks, newTask]);
-        }
+    function addTask(){
+        const newTask = { 
+            id: `todo_${nanoid()}`, 
+            name: "New Task", 
+            description: "Description Here", 
+            completed: false 
+        };
+
+        setCurrentTask(newTask);
+        setAddingNewTask(true);
+        setTasks([...tasks, newTask]);
+    }
+
+    function stopAddingNewTask(){
+        setAddingNewTask(false);
     }
 }
   
