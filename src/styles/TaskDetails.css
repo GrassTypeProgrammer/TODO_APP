@@ -29,3 +29,14 @@
 .TaskDetails_button{
     width: 15rem;
 }
+
+.TaskDetails_noTaskContainer{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.TaskDetails_noTaskContainer{
+    align-self: center;
+}

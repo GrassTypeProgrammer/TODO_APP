@@ -89,7 +89,6 @@ function TaskList(props){
 
 TaskList.propTypes = { 
     tasks: PropTypes.any,
-    currentTaskUpdated: PropTypes.any,
     onSelectItem: PropTypes.func.isRequired,
     toggleTaskCompleted: PropTypes.func.isRequired,
 }

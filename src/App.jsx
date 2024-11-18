@@ -1,13 +1,13 @@
 import TaskDetails from "./TaskDetails";
 import TaskList from "./TaskList";
 import {PropTypes} from "prop-types"
-import './styles/TodoApp.css'
 import Divider from "./components/Divider";
 import { useEffect, useState  } from "react";
 import { nanoid } from "nanoid";
+import './styles/TodoApp.css'
 
 // dataTemplate
-// { id: "todo-0", name: "Eat", completed: true, description: "description-0"}
+// { id: "0", name: "Eat", completed: true, description: "description-0"}
 
 function App() {
     const [tasks, setTasks] = useState([]);
@@ -23,11 +23,9 @@ function App() {
     }
 
     return <div className="TodoApp_root">
-        {/* TODO: Perhaps move the editing of tasks into this component so that you don't have to pass in the currentUpdatedTask */}
         <div className="column">
             <TaskList 
                 tasks={tasks} 
-                currentTaskUpdated={currentTask} 
                 onSelectItem={onSelectItem} 
                 toggleTaskCompleted={toggleTaskCompleted}
                 />
@@ -91,7 +89,7 @@ function App() {
 
     function addTask(){
         const newTask = { 
-            id: `todo_${nanoid()}`, 
+            id: `${nanoid()}`, 
             name: "New Task", 
             description: "Description Here", 
             completed: false 

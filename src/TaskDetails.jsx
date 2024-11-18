@@ -15,10 +15,6 @@ function TaskDetails(props){
     const editTitleFieldRef = useRef(null);
     const editButtonRef = useRef(null);
 
-    {/* TODO: Center this */}
-    // const noTaskTemplate = <label>No task selected</label>
-
-
     useEffect(() => {
         if (!wasEditing && isEditing) {
             editTitleFieldRef.current.focus();
@@ -32,9 +28,8 @@ function TaskDetails(props){
         }
     }, [wasEditing, isEditing, props.addingNewTask]);
 
-    // TODO: make this more readable
     return <form className="TaskDetails_root" onSubmit={handleSubmit}>
-        {currentTask != undefined &&
+        {currentTask != undefined?
         <>
             {isEditing ? 
                 <input 
@@ -104,6 +99,10 @@ function TaskDetails(props){
                 }
             </div>
         </>
+        :
+        <div className='TaskDetails_noTaskContainer'>
+            <p className='TaskDetails_label'>No task selected</p>
+        </div>
         }
     </form>
 
