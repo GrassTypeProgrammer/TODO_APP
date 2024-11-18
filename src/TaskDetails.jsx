@@ -54,9 +54,13 @@ function TaskDetails(props){
                     defaultValue={currentTask.description}
                 />
                 :
-                <div className='TaskDetails_descriptionBox'>
-                    <p>{currentTask.description}</p>
-                </div>
+                <textarea  
+                    readOnly={true}
+                    id={currentTask != undefined? currentTask.id : 0} 
+                    className="TaskDetails_descriptionBox" 
+                    type="text" 
+                    value={currentTask.description}
+                />
             }
             <br/>
             <div className='TaskDetails_footer'>
