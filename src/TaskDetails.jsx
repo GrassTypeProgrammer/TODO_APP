@@ -46,9 +46,8 @@ function TaskDetails(props){
             }
             <br/>
             {isEditing ? 
-                <input  
+                <textarea  
                     id={currentTask != undefined? currentTask.id : 0} 
-                    // Does this need todo-text?
                     className="TaskDetails_descriptionBox" 
                     type="text" 
                     onChange={handleChangeDescription} 

@@ -11,9 +11,6 @@
 
 .TaskDetails_descriptionBox{
     flex: 1;
-    border-style: solid;
-    border-color: black;
-    border-width: 1px;
     padding: 2rem;
 }
 
