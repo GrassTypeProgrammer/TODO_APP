@@ -5,19 +5,20 @@ import './../styles/TodoItem.css'
 function TodoItem (props) {
 
       return (
-        <div className="TodoItem_root stack-small" onClick={() => props.onSelectItem(props.id)} aria-current={props.isCurrent}>
-          <div className="TodoItem_content c-cb">
+        <div className="TodoItem_root" 
+          aria-current={props.isCurrent}
+          onClick={() => props.onSelectItem(props.id)} 
+        >
             <input
+              className="TodoItem_checkBox"
               id={props.id}
               type="checkbox"
               defaultChecked={props.completed}
               onChange={() => props.toggleTaskCompleted(props.id)}
             />
-            <label className="todo-label" htmlFor={props.id}>
+            <label className="TodoItem_label" htmlFor={props.id}  >
               {props.name}
             </label>
-          </div>
-          
         </div>
     );
 }
