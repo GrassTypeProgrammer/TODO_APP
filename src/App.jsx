@@ -5,6 +5,7 @@ import Divider from "./components/Divider";
 import { useEffect, useState  } from "react";
 import { nanoid } from "nanoid";
 import './styles/TodoApp.css'
+import TabBar from "./components/TabBar";
 
 // dataTemplate
 // { id: "0", name: "Eat", completed: true, description: "description-0"}
@@ -13,6 +14,7 @@ function App() {
     const [tasks, setTasks] = useState([]);
     const [currentTask, setCurrentTask] = useState(null);
     const [addingNewTask, setAddingNewTask] = useState(false);
+    const [toggledTab, setToggledTab] = useState(0);
 
     useEffect(() => {
         loadData();
@@ -23,25 +25,33 @@ function App() {
     }
 
     return <div className="TodoApp_root">
-        <div className="column">
-            <TaskList 
-                tasks={tasks} 
-                onSelectItem={onSelectItem} 
-                toggleTaskCompleted={toggleTaskCompleted}
-                />
-            <button type="submit" className="btn btn__primary btn__lg" onClick={addTask}>
-                Add
-            </button>
+        <TabBar labels={['one', 'two']} onSelectTab={onSelectTab} toggledTab={toggledTab}/>
+        <div className="row">
+            <div className="column">
+                <TaskList 
+                    tasks={tasks} 
+                    onSelectItem={onSelectItem} 
+                    toggleTaskCompleted={toggleTaskCompleted}
+                    />
+                <button type="submit" className="btn btn__primary btn__lg" onClick={addTask}>
+                    Add
+                </button>
+            </div>
+
+            <Divider/>
+            <TaskDetails 
+                currentTask={currentTask} 
+                editTask={editTask}
+                deleteTask={deleteTask}
+                addingNewTask={addingNewTask}
+                stopAddingNewTask={stopAddingNewTask}
+            />
         </div>
-        <Divider/>
-        <TaskDetails 
-            currentTask={currentTask} 
-            editTask={editTask}
-            deleteTask={deleteTask}
-            addingNewTask={addingNewTask}
-            stopAddingNewTask={stopAddingNewTask}
-        />
     </div>
+
+    function onSelectTab(index){
+        setToggledTab(index);
+    }
 
     function onSelectItem(item){
         setCurrentTask(item);

@@ -10,7 +10,7 @@
     padding: var(--padding); 
 
     display: flex;
-    flex-direction: horizontal;
+    flex-direction: column;
     
     background-color: #fff;
     box-shadow:

@@ -1,0 +1,33 @@
+.TabBar_root{
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+
+.TabBar_tab{
+    width: 100px;
+    height: 30px;
+    text-align: center;
+    line-height: 30px;
+    cursor: pointer;
+    transition: all 0.1s ease;
+
+    background-color: #fff;
+    box-shadow:
+        0 2px 4px 0 rgb(0 0 0 / 20%),
+        0 2.5rem 5rem 0 rgb(0 0 0 / 10%);
+}
+
+.TabBar_tab:hover{
+    background-color: #cdcdcd;
+}
+
+.TabBar_tab:active{
+    background-color: #848484;
+}
+
+.TabBar_tab.toggled[aria-pressed="true"] {
+    background-color: #e4e4e4;
+    text-decoration: underline;
+}
+
