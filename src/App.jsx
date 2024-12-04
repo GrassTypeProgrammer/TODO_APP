@@ -12,6 +12,7 @@ import TabBar from "./components/TabBar";
 
 function App() {
     const [tasks, setTasks] = useState([]);
+    const [boards, setBoards] = useState([]);
     const [currentTask, setCurrentTask] = useState(null);
     const [addingNewTask, setAddingNewTask] = useState(false);
     const [toggledTab, setToggledTab] = useState(0);
@@ -25,7 +26,7 @@ function App() {
     }
 
     return <div className="TodoApp_root">
-        <TabBar labels={['one', 'two']} onSelectTab={onSelectTab} toggledTab={toggledTab}/>
+        <TabBar labels={boards ?? []} onSelectTab={onSelectTab} toggledTab={toggledTab} onSelectNewTab={onSelectNewTab}/>
         <div className="row">
             <div className="column">
                 <TaskList 
@@ -49,8 +50,28 @@ function App() {
         </div>
     </div>
 
+    function onSelectNewTab(){
+        // Save tasks for current board.
+        saveTasksData(tasks, toggledTab);
+        // Add new tabID
+        const newBoardIds = boards;
+        const newBoardId = boards[boards.length - 1] + 1;
+        newBoardIds.push(newBoardId);
+        // save tabID
+        saveBoardIDs(newBoardIds);
+        // Set new tab as current
+        setToggledTab(newBoardId);
+        // Save empty task list?
+        setTasks([]);
+        // Update the task list
+        saveTaskIDs(tasks);
+        saveTasksData(tasks, newBoardId);
+    }
+
     function onSelectTab(index){
         setToggledTab(index);
+        saveTasksData(tasks, toggledTab);
+        loadData(index);
     }
 
     function onSelectItem(item){
@@ -75,7 +96,7 @@ function App() {
         
         setCurrentTask(editedTask);
         setTasks(updatedTasks);
-        saveTasksData(updatedTasks);
+        saveTasksData(updatedTasks, toggledTab);
     }
 
     function deleteTask(id){
@@ -108,7 +129,8 @@ function App() {
         setCurrentTask(newTask);
         setAddingNewTask(true);
         setTasks([...tasks, newTask]);
-        saveTasksData(tasks);
+        saveTaskIDs(tasks);
+        saveTasksData(tasks, toggledTab);
     }
 
     function stopAddingNewTask(){
@@ -116,7 +138,7 @@ function App() {
     }
 
     //#region Save/Load
-    function saveTasksData(tasks) {
+    function saveTasksData(tasks, toggledTab) {
         const taskIDs = [];
 
         for (let index = 0; index < tasks.length; index++) {
@@ -127,10 +149,11 @@ function App() {
         }
 
         const taskIDsString = JSON.stringify(taskIDs);
-        localStorage.setItem('taskIDs', taskIDsString);
+        localStorage.setItem(`board${toggledTab}/taskIDs`, taskIDsString);
     }
 
     function deleteTaskData(tasks, IDToDelete){
+        localStorage.removeItem(`board${toggledTab}/${IDToDelete}`);
         localStorage.removeItem(IDToDelete);
         saveTaskIDs(tasks);
     }
@@ -144,11 +167,29 @@ function App() {
         }
 
         const taskIDsString = JSON.stringify(taskIDs);
-        localStorage.setItem('taskIDs', taskIDsString);
+        localStorage.setItem(`board${toggledTab}/taskIDs`, taskIDsString);
     }
 
-    function loadData(){
-        const taskIDsString = localStorage.getItem('taskIDs');
+    function saveBoardIDs(boards){
+        const boardIDs = JSON.stringify(boards);
+        localStorage.setItem('boardIDs', boardIDs);
+    }
+
+    function loadBoardIDs(){
+        let boardIDs = JSON.parse(localStorage.getItem('boardIDs'));
+        
+        if(boardIDs == undefined || boardIDs == ''){
+            boardIDs = [0];
+            saveBoardIDs(boardIDs);
+        }
+
+        setBoards(boardIDs);
+    }
+
+    function loadData(board){
+        loadBoardIDs();
+        const taskIDsString = localStorage.getItem(`board${board??0}/taskIDs`);
+
         if(taskIDsString != undefined && taskIDsString != ''){
             const taskIDs = JSON.parse(taskIDsString);
             const loadedTasks = [];

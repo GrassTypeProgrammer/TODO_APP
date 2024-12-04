@@ -17,6 +17,12 @@ function TabBar (props){
                     {label}
                     </button>
             })}
+
+            {props.onSelectNewTab &&
+                <button className={'TabBar_tab'} onClick={() => {props.onSelectNewTab()}}>
+                    New Tab
+                </button>
+            }
         </div>
     )
 
@@ -26,6 +32,7 @@ TabBar.propTypes = {
     labels: PropTypes.array.isRequired,
     toggledTab: PropTypes.number.isRequired,
     onSelectTab: PropTypes.func.isRequired,
+    onSelectNewTab: PropTypes.func,
 }
 
 export default TabBar;
