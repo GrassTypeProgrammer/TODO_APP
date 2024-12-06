@@ -1,7 +1,7 @@
 import TodoItem from "./components/TodoItem";
 import FilterButton from "./components/FilterButton";
 import { useState, useRef, useEffect  } from "react";
-import { PropTypes } from "prop-types"
+import  PropTypes  from "prop-types"
 import { usePrevious } from "./Utils";
 import './styles/TaskList.css'
 
@@ -43,7 +43,12 @@ function TaskList(props){
 
     return (
       <div className="TaskList_root">
-        <h1>TODO</h1>
+        <div className="row space-between align-center">
+          <h1>TODO</h1>
+          <button className="TaskList_deleteButton" onClick={props.onDeleteBoard}>
+            X
+          </button>
+        </div>
         <div className="filters btn-group stack-exception">
            {filterList}
         </div>
@@ -91,6 +96,7 @@ TaskList.propTypes = {
     tasks: PropTypes.any,
     onSelectItem: PropTypes.func.isRequired,
     toggleTaskCompleted: PropTypes.func.isRequired,
+    onDeleteBoard: PropTypes.func.isRequired,
 }
 
 export default TaskList;
