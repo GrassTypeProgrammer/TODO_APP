@@ -71,6 +71,7 @@ export function createTask(boardID){
         boardID: boardID,
         name: 'New Task',
         description: 'Description',
+        completed: false,
     };
 
     // save task

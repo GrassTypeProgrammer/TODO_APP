@@ -15,7 +15,6 @@ const FILTER_MAP = {
 function TaskList(props){
     const [tasks, setTasks] = useState(props.tasks);
     const [filter, setFilter] = useState("All");
-    const [selectedTaskID, setSelectedTaskID] = useState(null);
     const FILTER_NAMES = Object.keys(FILTER_MAP);
     const listHeadingRef = useRef(null);
 
@@ -36,9 +35,9 @@ function TaskList(props){
         }
 
         if(tasks != props.tasks){
-
             setTasks(props.tasks)
         }
+
       }, [tasks.length, prevTaskLength, props.tasks, tasks]);
 
     return (
@@ -67,24 +66,23 @@ function TaskList(props){
             .filter(FILTER_MAP[filter])
             .map((task) => (
               <TodoItem
-                id={task.id}
+                ID={task.ID}
                 name={task.name}
                 completed={task.completed}
-                key={task.id}
-                toggleTaskCompleted={() => {props.toggleTaskCompleted(task.id)}}
+                key={task.ID}
+                toggleTaskCompleted={() => {props.toggleTaskCompleted(task.ID)}}
                 onSelectItem={onSelectItem}
-                isCurrent={selectedTaskID === task.id}
+                isCurrent={props.selectedTaskID === task.ID}
             />
         ));
   
       return listItems;
     }
 
-    function onSelectItem(id){
+    function onSelectItem(ID){
         for (let index = 0; index < tasks.length; index++) {
             const task = tasks[index];
-            if(task.id == id){
-                setSelectedTaskID(id)
+            if(task.ID == ID){
                 props.onSelectItem(task);
                 break;
             }
@@ -97,6 +95,7 @@ TaskList.propTypes = {
     onSelectItem: PropTypes.func.isRequired,
     toggleTaskCompleted: PropTypes.func.isRequired,
     onDeleteBoard: PropTypes.func.isRequired,
+    selectedTaskID: PropTypes.string,
 }
 
 export default TaskList;

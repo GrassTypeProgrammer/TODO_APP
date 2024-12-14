@@ -8,16 +8,24 @@ import TabBar from "./components/TabBar";
 import * as Database from "./Database";
 /**
  * TODO
- *      Make a new class that handles the data. It will act like an API. It wants the following functions:
- *      - GetBoardIDs(boardID)
- *      - RemoveBoard(boardID)
- *      - AddBoard(boardID)
- *      - GetTasks(boardID)
- *      
- *      - CreateTask(boardID)
- *      - DeleteTask(boardID, taskID)   // needs board ID to remove from task from that list.
- *      - EditTask(taskID)
- *  
+ *      Modifications to make this work again:
+ *      x Delete task
+ *      x Delete Board
+ *      x Ticking off a task does not remain ticked off if you change board and return.
+ *      x Cancel editing
+ *      x When adding new task, set it to the current task and set to editing.
+ *      x Check that toggling tasks is complete.
+ *   
+ *      - Next tasks:
+ *          - Make sure everything works if you delete a board and add new ones. (i.e. you have boards 0, 1, 4. board
+ *                  4 would be index 2. Make sure everything works in that case).         
+ *          - download data button
+ *          - Make some anki notes. (remember to add the one where setstate is asynchronous and not guaranteed to 
+ *              update intime for the next line of code).
+ *          - Move back to carnivorous giraffe for a bit. Make sure to create anki cards for that.
+ * 
+ *          - Edit board name
+ *          
  */
 
 
@@ -25,23 +33,23 @@ import * as Database from "./Database";
 // { id: "0", name: "Eat", completed: true, description: "description-0"}
 
 function App() {
+    const [boardIDs, setBoardIDs] = useState([]);
+    const [selectedBoardIndex, setSelectedBoardIndex] = useState(0);
+    const [selectedBoardID, setSelectedBoardID] = useState(0);
     const [tasks, setTasks] = useState([]);
-    const [boards, setBoards] = useState([]);
     const [currentTask, setCurrentTask] = useState(null);
-    const [addingNewTask, setAddingNewTask] = useState(false);
-    const [toggledTab, setToggledTab] = useState(0);
-
+    
     useEffect(() => {
-        // loadData();
-        console.log(Database.getBoardIDs());
+        loadData(selectedBoardIndex);
     },[]);
 
-    // if(tasks == undefined){
-    //   return <div/>
-    // }
-
-    return <div className="TodoApp_root">
-        <TabBar labels={boards ?? []} onSelectTab={onSelectTab} toggledTab={toggledTab} onSelectNewTab={onSelectNewTab}/>
+return <div className="TodoApp_root">
+        <TabBar 
+            labels={boardIDs ?? []} 
+            onSelectTab={onSelectTab} 
+            toggledTab={selectedBoardIndex} 
+            onSelectNewTab={onSelectNewTab}
+        />
         <div className="row">
             <div className="column">
                 <TaskList 
@@ -49,8 +57,10 @@ function App() {
                     onSelectItem={onSelectItem} 
                     toggleTaskCompleted={toggleTaskCompleted}
                     onDeleteBoard={deleteBoard}
+                    selectedTaskID={currentTask != null? currentTask.ID: undefined}
+                    editNewTask={true}
                     />
-                <button type="submit" className="btn btn__primary btn__lg" onClick={addTask}>
+                <button type="submit" className="btn btn__primary btn__lg" onClick={createTask}>
                     Add
                 </button>
             </div>
@@ -60,204 +70,97 @@ function App() {
                 currentTask={currentTask} 
                 editTask={editTask}
                 deleteTask={deleteTask}
-                addingNewTask={addingNewTask}
-                stopAddingNewTask={stopAddingNewTask}
             />
         </div>
     </div>
 
-    function addTask(){
-        Database.createNewBoard();
-        const ID = Database.createTask(0);
-        const task = Database.getTask(ID);
-        task.name = "It's Working!"
-        Database.modifyTask(task.ID, task);
-        // const newTask = { 
-        //     id: `${nanoid()}`, 
-        //     name: "New Task", 
-        //     description: "Description Here", 
-        //     completed: false 
-        // };
-
-        // setCurrentTask(newTask);
-        // setAddingNewTask(true);
-        // setTasks([...tasks, newTask]);
-        // saveTaskIDs(tasks);
-        // saveTasksData(tasks, toggledTab);
+    function loadData(boardIndex){
+        const boardIDs = loadBoardIDs();
+        loadTasks(boardIDs[boardIndex]);        
     }
 
+    function loadBoardIDs(){
+        let boardIDs = Database.getBoardIDs();
+
+        if(boardIDs == undefined || boardIDs.length == 0){
+            Database.createNewBoard();
+            boardIDs = Database.getBoardIDs();
+        }
+        
+        setBoardIDs(boardIDs);
+        return boardIDs;
+    }
+
+    function loadTasks(boardID){
+        const tasks = Database.getTasks(boardID);
+        setTasks(tasks);
+    }
+
+    function createTask(){
+        Database.createTask(selectedBoardID);
+        const tasks = Database.getTasks(selectedBoardID);
+        setTasks(tasks);
+        setCurrentTask(tasks[tasks.length-1]);
+    }
+
+    function onSelectTab(boardIndex, _boardIDs){
+        if(_boardIDs == undefined){
+            _boardIDs = boardIDs;
+        }
+
+        setSelectedBoardIndex(boardIndex);
+        setSelectedBoardID(_boardIDs[boardIndex]);
+        loadData(boardIndex);
+        setCurrentTask(null)
+    }
 
     function onSelectNewTab(){
-        // Save tasks for current board.
-        // saveTasksData(tasks, toggledTab);
-        // Add new tabID
-        const newBoardIds = boards;
-        const newBoardId = boards[boards.length - 1] + 1;
-        newBoardIds.push(newBoardId);
-        // save tabID
-        // saveBoardIDs(newBoardIds);
-        // Set new tab as current
-        setToggledTab(newBoardId);
-        // Save empty task list?
-        setTasks([]);
-        // Update the task list
-        // saveTaskIDs(tasks);
-        // saveTasksData(tasks, newBoardId);
-    }
-
-    function onSelectTab(index){
-        setToggledTab(index);
-        // saveTasksData(tasks, toggledTab);
-        // loadData(index);
+        const newBoardIndex = boardIDs.length;
+        Database.createNewBoard();
+        const _boardIDs = loadBoardIDs();
+        setSelectedBoardIndex(newBoardIndex);
+        setSelectedBoardID(_boardIDs[newBoardIndex]);
+        loadTasks(_boardIDs[newBoardIndex]);
     }
 
     function onSelectItem(item){
         setCurrentTask(item);
     }
 
-    function editTask(newName, newDescription){
-        const editedTask = {
-            id: currentTask.id,
-            completed: currentTask.completed,
-            name: newName,
-            description: newDescription,
-        }
-
-        const updatedTasks = tasks.map((task) => {
-            if (editedTask.id === task.id) {
-                return { ...task, name: editedTask.name, description: editedTask.description };
-            }
-            
-            return task;
-        });
-        
-        setCurrentTask(editedTask);
-        setTasks(updatedTasks);
-        // saveTasksData(updatedTasks, toggledTab);
+    function editTask(task){
+        Database.modifyTask(task.ID, task);
+        loadTasks(selectedBoardID);
     }
 
-    function deleteTask(id){
-        const remainingTasks = tasks.filter(task => id !== task.id);
+    function deleteTask(taskID){
+        Database.deleteTask(selectedBoardID, taskID);
         setCurrentTask(null);
-        setTasks(remainingTasks);
-        // deleteTaskData(remainingTasks, id);
+        loadData(selectedBoardIndex);
     }
-
+    
     function deleteBoard(){
-        
-        const newBoardIDs = boards;
-        const index = newBoardIDs.indexOf(toggledTab);
-        
-        if (index !== -1) {
-            newBoardIDs.splice(index, 1);
-        }
-
-        setBoards(newBoardIDs);
-        // saveBoardIDs(newBoardIDs);
-        
-        const taskData = tasks;
-        
-        for (let index = 0; index < taskData.length; index++) {
-            const task = taskData[index];
-            deleteTask(task.ID);
-        }
-        
-        localStorage.removeItem(`board${toggledTab}/taskIDs`);
-        
-        onSelectTab(boards[0]);
+        Database.deleteBoard(selectedBoardID);
+        const boardIDs = loadBoardIDs();
+        loadData(boardIDs.length - 1);
+        onSelectTab(boardIDs.length - 1, boardIDs);
     }
 
-    function toggleTaskCompleted(id){
-        const updatedTasks = tasks.map((task) => {
-            if (id === task.id) {
-                return { ...task, completed: !task.completed };
-            }
+    function toggleTaskCompleted(ID){
+        let editedTask = null;
 
-            return task;
-        });
-
-        setTasks(updatedTasks);
-    }
-
-   
-
-    function stopAddingNewTask(){
-        setAddingNewTask(false);
-    }
-
-    //#region Save/Load
-    // function saveTasksData(tasks, toggledTab) {
-    //     const taskIDs = [];
-
-    //     for (let index = 0; index < tasks.length; index++) {
-    //         const task = tasks[index];
-    //         const taskString = JSON.stringify(task);
-    //         localStorage.setItem(task.id, taskString);
-    //         taskIDs.push(task.id);
-    //     }
-
-    //     const taskIDsString = JSON.stringify(taskIDs);
-    //     localStorage.setItem(`board${toggledTab}/taskIDs`, taskIDsString);
-    // }
-
-    // function deleteTaskData(tasks, IDToDelete){
-    //     localStorage.removeItem(`board${toggledTab}/${IDToDelete}`);
-    //     localStorage.removeItem(IDToDelete);
-    //     saveTaskIDs(tasks);
-    // }
-
-    // function saveTaskIDs(tasks){
-    //     const taskIDs = [];
-
-    //     for (let index = 0; index < tasks.length; index++) {
-    //         const task = tasks[index];
-    //         taskIDs.push(task.id);
-    //     }
-
-    //     const taskIDsString = JSON.stringify(taskIDs);
-    //     localStorage.setItem(`board${toggledTab}/taskIDs`, taskIDsString);
-    // }
-
-    // function saveBoardIDs(boards){
-    //     const boardIDs = JSON.stringify(boards);
-    //     localStorage.setItem('boardIDs', boardIDs);
-    // }
-
-    // function loadBoardIDs(){
-    //     let boardIDs = JSON.parse(localStorage.getItem('boardIDs'));
-        
-    //     if(boardIDs == undefined || boardIDs == ''){
-    //         boardIDs = [0];
-    //         saveBoardIDs(boardIDs);
-    //     }
-
-    //     setBoards(boardIDs);
-    // }
-
-    // function loadData(board){
-    //     loadBoardIDs();
-    //     const taskIDsString = localStorage.getItem(`board${board??0}/taskIDs`);
-
-    //     if(taskIDsString != undefined && taskIDsString != ''){
-    //         const taskIDs = JSON.parse(taskIDsString);
-    //         const loadedTasks = [];
+        for (let index = 0; index < tasks.length; index++) {
+            const task = tasks[index];
             
-    //         if(taskIDs != undefined){
-    //             for (let index = 0; index < taskIDs.length; index++) {
-    //                 const taskID = taskIDs[index];
-    //                 const taskString = localStorage.getItem(taskID);
-    //                 const task = JSON.parse(taskString);
-    //                 if(task != null){
-    //                     loadedTasks.push(task);
-    //                 }
-    //             }
-                
-    //             setTasks(loadedTasks);
-    //         }
-    //     }
-    // }
+            if( task.ID == ID){
+                editedTask = { ...task, completed: !task.completed }
+                break;
+            }
+        }
 
-    //#endregion
+        if(editedTask != null){
+            editTask(editedTask);
+        }
+    }
 }
   
 App.propTypes = {

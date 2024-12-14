@@ -7,8 +7,6 @@ import './styles/TaskDetails.css'
 function TaskDetails(props){
     const currentTask = props.currentTask;
     const [isEditing, setEditing] = useState(false);
-    const [newName, setNewName] = useState('');
-    const [newDescription, setNewDescription] = useState('');
     const [descriptionChanged, setDescriptionChanged] = useState(false);
     const [nameChanged, setNameChanged] = useState(false);
     const wasEditing = usePrevious(isEditing);
@@ -22,11 +20,7 @@ function TaskDetails(props){
         else if (wasEditing && !isEditing) {
             editButtonRef.current.focus();
         }
-
-        if(props.addingNewTask){
-            setEditing(true);
-        }
-    }, [wasEditing, isEditing, props.addingNewTask]);
+    }, [wasEditing, isEditing]);
 
     return <form className="TaskDetails_root" onSubmit={handleSubmit}>
         {currentTask != undefined?
@@ -95,7 +89,7 @@ function TaskDetails(props){
                     <button 
                         type="button" 
                         className="TaskDetails_button btn btn__danger" 
-                        onClick={() => {props.deleteTask(currentTask.id)}}
+                        onClick={deleteTask}
                     >
                         Delete
                     </button>
@@ -109,48 +103,41 @@ function TaskDetails(props){
         }
     </form>
 
+    function deleteTask(){
+        props.deleteTask(currentTask.ID);
+    }
+
     function handleChangeTitle(e) {
-        setNewName(e.target.value);
+        currentTask.name = e.target.value;
         setNameChanged(true);
     }
 
     function handleChangeDescription(e){
-        setNewDescription(e.target.value);
+        currentTask.description = e.target.value;
         setDescriptionChanged(true);
     }
 
     function onCancelTask(){
         setEditing(false);
-
-        if(props.addingNewTask){
-            props.stopAddingNewTask()
-        }
     }
 
     function handleSubmit(e){
         e.preventDefault();
-        props.editTask(
-            nameChanged ? newName : currentTask.name, 
-            descriptionChanged ? newDescription : currentTask.description, 
-        );
-        setNewName("");
-        setNewDescription("");
+
+        if(nameChanged || descriptionChanged){
+            props.editTask(currentTask);
+        }
+
         setEditing(false);
         setNameChanged(false);
         setDescriptionChanged(false);
-        
-        if(props.addingNewTask){
-            props.stopAddingNewTask()
-        }
     }
 }
 
 TaskDetails.propTypes = {
     currentTask: PropTypes.object,
-    addingNewTask: PropTypes.bool,
     editTask: PropTypes.func.isRequired,
     deleteTask: PropTypes.func.isRequired,
-    stopAddingNewTask: PropTypes.func.isRequired,
 }
 
 
